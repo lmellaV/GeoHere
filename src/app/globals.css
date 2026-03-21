@@ -1,0 +1,264 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  --background-color: #f8fafc;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(148, 163, 184, 0.22);
+  --text-main: #0f172a;
+  --text-soft: #64748b;
+  --accent: #059669;
+  --accent-2: #0ea5e9;
+  --login-bg: #ffffff;
+  --login-border: #000000;
+  --login-text: #000000;
+  --login-input-bg: #ffffff;
+  --login-input-border: #000000;
+}
+
+body.dark,
+body[data-theme="dark"] {
+  --background-color: #0f172a;
+  --card-bg: rgba(15, 23, 42, 0.68);
+  --card-border: rgba(148, 163, 184, 0.3);
+  --text-main: #e2e8f0;
+  --text-soft: #94a3b8;
+  --accent: #7c3aed;
+  --accent-2: #22d3ee;
+  --login-bg: #000000;
+  --login-border: #ffffff;
+  --login-text: #ffffff;
+  --login-input-bg: #000000;
+  --login-input-border: #ffffff;
+}
+
+body {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Oxygen",
+    "Ubuntu",
+    "Cantarell",
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--login-bg);
+  color: var(--login-text);
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.app-surface {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.4);
+  transition: all 0.3s ease;
+}
+
+.app-surface:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.45);
+}
+
+.btn-modern {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0.6rem 1.1rem;
+  font-weight: 600;
+  transition: all 0.26s ease;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+  background: linear-gradient(145deg, #58a233 0%, #3d7f1e 100%);
+  color: #f7ffee;
+  border-color: rgba(158, 220, 122, 0.7);
+}
+
+.btn-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.39);
+}
+
+.btn-modern:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.3);
+}
+
+.btn-leaf {
+  background: linear-gradient(145deg, #86efac 0%, #4d7c0f 100%);
+  color: #0f172a;
+  border-color: rgba(34, 197, 94, 0.55);
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.32);
+}
+
+.btn-outline {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(148, 163, 184, 0.5);
+  color: var(--text-main);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #7c3aed, #22d3ee);
+  color: #fff;
+  border-color: transparent;
+}
+
+.btn-danger {
+  background: rgba(220, 38, 38, 0.18);
+  color: #fef2f2;
+  border-color: rgba(248, 113, 113, 0.45);
+}
+
+.btn-muted {
+  background: rgba(100, 116, 139, 0.2);
+  color: var(--text-soft);
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* Estilos minimalistas para login */
+.login-container {
+  background-color: var(--login-bg);
+  border: 1px solid var(--login-border);
+  color: var(--login-text);
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.login-input {
+  background-color: var(--login-input-bg);
+  border: 1px solid var(--login-input-border);
+  color: var(--login-text);
+  transition: all 0.2s ease;
+}
+
+.login-input::placeholder {
+  color: var(--login-text);
+  opacity: 0.5;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: var(--login-text);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+body.dark .login-input:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+}
+
+.login-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--login-text);
+  opacity: 0.7;
+}
+
+.login-btn {
+  background-color: var(--login-border);
+  color: var(--login-bg);
+  border: 1px solid var(--login-border);
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.login-btn:hover {
+  opacity: 0.85;
+}
+
+.login-btn:disabled {
+  opacity: 0.5;
+}
+
+/* Botones minimalistas globales */
+.btn-minimal {
+  background-color: var(--login-text);
+  color: var(--login-bg);
+  border: 1px solid var(--login-text);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.btn-minimal:hover {
+  opacity: 0.8;
+}
+
+.btn-minimal-outline {
+  background-color: transparent;
+  color: var(--login-text);
+  border: 1px solid var(--login-text);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.btn-minimal-outline:hover {
+  background-color: var(--login-text);
+  color: var(--login-bg);
+}
+
+.btn-minimal-danger {
+  background-color: #dc2626;
+  color: #ffffff;
+  border: 1px solid #dc2626;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.btn-minimal-danger:hover {
+  opacity: 0.8;
+}
+
+/* Contenedor minimalista */
+.card-minimal {
+  background-color: var(--login-bg);
+  border: 1px solid var(--login-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--login-text);
+}
+
+/* Input minimalista global */
+.input-minimal {
+  background-color: var(--login-input-bg);
+  border: 1px solid var(--login-input-border);
+  color: var(--login-text);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.input-minimal::placeholder {
+  color: var(--login-text);
+  opacity: 0.5;
+}
+
+.input-minimal:focus {
+  outline: none;
+  border-color: var(--login-text);
+}

@@ -1,0 +1,3 @@
+module.exports=[64433,a=>{a.v({className:"inter_5972bc34-module__OU16Qa__className"})},81930,a=>{"use strict";var b=a.i(29540),c=a.i(64433);let d={className:c.default.className,style:{fontFamily:"'Inter', 'Inter Fallback'",fontStyle:"normal"}};function e({children:a}){return(0,b.jsx)("html",{lang:"es",children:(0,b.jsx)("body",{className:d.className,children:a})})}null!=c.default.variable&&(d.variable=c.default.variable),a.s(["default",()=>e,"metadata",0,{title:"GeoHere - Check-in por Geolocalización",description:"Sistema de check-in y check-out con validación de geolocalización"}],81930)}];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__3cae31d3._.js.map
