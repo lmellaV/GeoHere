@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { users, companies } from "@/db/schema";
+import { users, companies, auditTrail } from "@/db/schema";
 import { authenticateAdmin } from "@/lib/auth-utils";
 import { generateId } from "@/lib/server-utils";
+import { isPasswordCompliant } from "@/lib/server-utils";
 import { hashPassword } from "@/lib/crypto";
 import { eq } from "drizzle-orm";
+import { getRequestMetadata } from "@/lib/request-metadata";
+import { sha256Hex } from "@/lib/integrity";
 
 export async function GET(req: NextRequest) {
   const auth = await authenticateAdmin(req);
@@ -20,6 +23,9 @@ export async function GET(req: NextRequest) {
         id: users.id,
         username: users.username,
         name: users.name,
+        email: users.email,
+        cargo: users.cargo,
+        jornada: users.jornada,
         companyId: users.companyId,
         companyName: companies.name,
         createdAt: users.createdAt,
@@ -46,24 +52,77 @@ export async function POST(req: NextRequest) {
     );
 
   try {
-    const { username, name, password, company_id } = await req.json();
-    if (!username || !password)
+    const { username, name, email, cargo, jornada, password, company_id } =
+      await req.json();
+    if (
+      !username ||
+      !name ||
+      !email ||
+      !cargo ||
+      !jornada ||
+      !password ||
+      !company_id
+    )
       return NextResponse.json(
-        { success: false, message: "Username y contraseña requeridos" },
+        {
+          success: false,
+          message:
+            "Nombre completo, RUT, correo, cargo, jornada, contraseña y empresa requeridos",
+        },
         { status: 400 },
       );
+
+    if (!isPasswordCompliant(password)) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números",
+        },
+        { status: 400 },
+      );
+    }
 
     const hashedPassword = await hashPassword(password);
     const id = generateId();
     await db.insert(users).values({
       id,
-      username,
-      name,
+      username: username.trim(),
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      cargo: cargo.trim(),
+      jornada: jornada.trim(),
       password: hashedPassword,
       companyId: company_id,
     });
 
-    return NextResponse.json({ success: true, user: { id, username, name } });
+    const requestMeta = getRequestMetadata(req);
+    const details = {
+      fullName: name.trim(),
+      rut: username.trim(),
+      email: email.trim().toLowerCase(),
+      cargo: cargo.trim(),
+      jornada: jornada.trim(),
+      companyId: company_id,
+      method: "admin_enrollment",
+    };
+
+    await db.insert(auditTrail).values({
+      id: generateId("audit"),
+      action: "enrollment.created",
+      actorType: "admin",
+      actorId: auth.user?.id || auth.user?.username || "admin_unknown",
+      targetUserId: id,
+      sourceIp: requestMeta.sourceIp,
+      userAgent: requestMeta.userAgent,
+      detailsJson: JSON.stringify(details),
+      detailsHash: await sha256Hex(JSON.stringify(details)),
+    });
+
+    return NextResponse.json({
+      success: true,
+      user: { id, username, name, email, cargo, jornada },
+    });
   } catch (error) {
     console.error("Error al crear usuario:", error);
     return NextResponse.json(

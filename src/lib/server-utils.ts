@@ -1,24 +1,28 @@
-export function generateId(prefix = ''): string {
+export function generateId(prefix = ""): string {
   const id = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   return prefix ? `${prefix}_${id}` : id;
 }
 
-export function generateSecurePassword(): string {
-  const symbols = "!@#$%^&*";
+export function isPasswordCompliant(password: string): boolean {
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+}
+
+export function generateSecurePassword(length = 8): string {
   const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const lowercase = "abcdefghijklmnopqrstuvwxyz";
   const numbers = "0123456789";
+  const alphanum = `${uppercase}${lowercase}${numbers}`;
 
-  const symbol = symbols[Math.floor(Math.random() * symbols.length)];
   const upper = uppercase[Math.floor(Math.random() * uppercase.length)];
+  const lower = lowercase[Math.floor(Math.random() * lowercase.length)];
   const number = numbers[Math.floor(Math.random() * numbers.length)];
 
-  let lowers = "";
-  for (let i = 0; i < 3; i++) {
-    lowers += lowercase[Math.floor(Math.random() * lowercase.length)];
+  let rest = "";
+  for (let i = 0; i < Math.max(length - 3, 0); i++) {
+    rest += alphanum[Math.floor(Math.random() * alphanum.length)];
   }
 
-  const allChars = [symbol, upper, number, ...lowers.split("")];
+  const allChars = [upper, lower, number, ...rest.split("")];
   for (let i = allChars.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [allChars[i], allChars[j]] = [allChars[j], allChars[i]];

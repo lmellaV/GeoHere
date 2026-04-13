@@ -8,13 +8,13 @@
  *   node scripts/fixture.js --keep-db  → skip drop, only insert missing rows
  */
 
-import Database from 'better-sqlite3';
-import bcrypt from 'argon2';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import Database from "better-sqlite3";
+import bcrypt from "argon2";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dbPath = path.join(__dirname, '..', 'app.db');
+const dbPath = path.join(__dirname, "..", "app.db");
 const db = new Database(dbPath);
 
 // Tiny ARGON2-compatible hash helper
@@ -22,7 +22,7 @@ async function hash(pw) {
   return bcrypt.hash(pw);
 }
 
-function uid(prefix = '') {
+function uid(prefix = "") {
   return `${prefix}${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
 }
 
@@ -31,7 +31,7 @@ function ago(minutes) {
 }
 
 // ──────────── CREATE TABLES ───────────────────────────────────
-console.log('\n🏗  Asegurando que las tablas existen...');
+console.log("\n🏗  Asegurando que las tablas existen...");
 db.exec(`
   CREATE TABLE IF NOT EXISTS companies (
     id TEXT PRIMARY KEY,
@@ -43,9 +43,12 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
-    name TEXT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    cargo TEXT NOT NULL,
+    jornada TEXT NOT NULL,
     password TEXT NOT NULL,
-    company_id TEXT REFERENCES companies(id),
+    company_id TEXT NOT NULL REFERENCES companies(id),
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
@@ -66,6 +69,13 @@ db.exec(`
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,
     distance REAL,
+    signature TEXT,
+    payload_hash TEXT,
+    prev_chain_hash TEXT,
+    chain_hash TEXT,
+    receipt_status TEXT DEFAULT 'pending',
+    receipt_sent_at TEXT,
+    receipt_error TEXT,
     action_time TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -80,41 +90,83 @@ db.exec(`
     resolved_at TEXT,
     resolved_by TEXT
   );
+  CREATE TABLE IF NOT EXISTS audit_trail (
+    id TEXT PRIMARY KEY,
+    action TEXT NOT NULL,
+    actor_type TEXT NOT NULL,
+    actor_id TEXT NOT NULL,
+    target_user_id TEXT,
+    source_ip TEXT,
+    user_agent TEXT,
+    details_json TEXT,
+    details_hash TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 // ──────────── WIPE ────────────────────────────────────────────
-const keepDb = process.argv.includes('--keep-db');
+const keepDb = process.argv.includes("--keep-db");
 if (!keepDb) {
-  console.log('\n🗑  Limpiando tablas...');
+  console.log("\n🗑  Limpiando tablas...");
   db.exec(`
+    DELETE FROM audit_trail;
     DELETE FROM admin_messages;
     DELETE FROM checkins;
     DELETE FROM users;
     DELETE FROM companies;
     DELETE FROM locations;
   `);
-  console.log('   ✓ Tablas vaciadas');
+  console.log("   ✓ Tablas vaciadas");
 }
 
 // ──────────── LOCATIONS ───────────────────────────────────────
-console.log('\n📍 Creando ubicaciones...');
+console.log("\n📍 Creando ubicaciones...");
 const insertLoc = db.prepare(`
   INSERT OR IGNORE INTO locations (id, name, latitude, longitude, radius) VALUES (?, ?, ?, ?, ?)
 `);
 const locs = [
-  { id: 'loc_casona',      name: 'Casona Nueva',         lat: -33.427782, lon: -70.617822, radius: 100  },
-  { id: 'loc_providencia', name: 'Sucursal Providencia',  lat: -33.4263,   lon: -70.6152,   radius: 100  },
-  { id: 'loc_vitacura',    name: 'Sucursal Vitacura',     lat: -33.3947,   lon: -70.5777,   radius: 100  },
-  { id: 'loc_maipu',       name: 'Bodega Maipú',          lat: -33.5117,   lon: -70.761,    radius: 150  },
+  {
+    id: "loc_casona",
+    name: "Casona Nueva",
+    lat: -33.427782,
+    lon: -70.617822,
+    radius: 100,
+  },
+  {
+    id: "loc_providencia",
+    name: "Sucursal Providencia",
+    lat: -33.4263,
+    lon: -70.6152,
+    radius: 100,
+  },
+  {
+    id: "loc_vitacura",
+    name: "Sucursal Vitacura",
+    lat: -33.3947,
+    lon: -70.5777,
+    radius: 100,
+  },
+  {
+    id: "loc_maipu",
+    name: "Bodega Maipú",
+    lat: -33.5117,
+    lon: -70.761,
+    radius: 150,
+  },
 ];
-locs.forEach(l => { insertLoc.run(l.id, l.name, l.lat, l.lon, l.radius); console.log(`   ✓ ${l.name}`); });
+locs.forEach((l) => {
+  insertLoc.run(l.id, l.name, l.lat, l.lon, l.radius);
+  console.log(`   ✓ ${l.name}`);
+});
 
 // ──────────── COMPANIES (admins) ──────────────────────────────
-console.log('\n🏢 Creando empresas...');
-const insertCompany = db.prepare(`INSERT OR IGNORE INTO companies (id, name, password) VALUES (?, ?, ?)`);
+console.log("\n🏢 Creando empresas...");
+const insertCompany = db.prepare(
+  `INSERT OR IGNORE INTO companies (id, name, password) VALUES (?, ?, ?)`,
+);
 const companyDefs = [
-  { id: 'company_casona', name: 'Casona Nueva',  pw: 'admin123' },
-  { id: 'company_norte',  name: 'Empresa Norte', pw: 'admin123' },
+  { id: "company_casona", name: "Casona Nueva", pw: "Admin123" },
+  { id: "company_norte", name: "Empresa Norte", pw: "Admin123" },
 ];
 for (const c of companyDefs) {
   const h = await hash(c.pw);
@@ -123,50 +175,140 @@ for (const c of companyDefs) {
 }
 
 // ──────────── USERS ───────────────────────────────────────────
-console.log('\n👤 Creando usuarios...');
+console.log("\n👤 Creando usuarios...");
 const insertUser = db.prepare(`
-  INSERT OR IGNORE INTO users (id, username, name, password, company_id) VALUES (?, ?, ?, ?, ?)
+  INSERT OR IGNORE INTO users (id, username, name, email, cargo, jornada, password, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `);
 const userDefs = [
-  { id: 'user_test_1', username: '12345678-9',  name: 'Usuario Prueba',    pw: 'admin123',  company: 'company_casona' },
-  { id: 'user_test_2', username: '98765432-1',  name: 'María Empleado',    pw: 'admin123',  company: 'company_norte'  },
-  { id: 'user_test_3', username: '11223344-5',  name: 'Pedro Olvidadizo',  pw: 'admin123',  company: 'company_casona' },
+  {
+    id: "user_test_1",
+    username: "12345678-9",
+    name: "Usuario Prueba",
+    email: "usuario.prueba@getinwork.cl",
+    cargo: "Operario",
+    jornada: "Completa",
+    pw: "Admin123",
+    company: "company_casona",
+  },
+  {
+    id: "user_test_2",
+    username: "98765432-1",
+    name: "María Empleado",
+    email: "maria.empleado@getinwork.cl",
+    cargo: "Supervisora",
+    jornada: "Turno",
+    pw: "Admin123",
+    company: "company_norte",
+  },
+  {
+    id: "user_test_3",
+    username: "11223344-5",
+    name: "Pedro Olvidadizo",
+    email: "pedro.olvidadizo@getinwork.cl",
+    cargo: "Técnico",
+    jornada: "Parcial",
+    pw: "Admin123",
+    company: "company_casona",
+  },
 ];
 for (const u of userDefs) {
   const h = await hash(u.pw);
-  insertUser.run(u.id, u.username, u.name, h, u.company);
+  insertUser.run(
+    u.id,
+    u.username,
+    u.name,
+    u.email,
+    u.cargo,
+    u.jornada,
+    h,
+    u.company,
+  );
   console.log(`   ✓ ${u.name}  (RUT: "${u.username}" / clave: "${u.pw}")`);
 }
 
 // ──────────── CHECKINS ────────────────────────────────────────
-console.log('\n⏱  Creando checkins de prueba...');
+console.log("\n⏱  Creando checkins de prueba...");
 const insertCheckin = db.prepare(`
   INSERT OR IGNORE INTO checkins (id, user_id, location_id, action, latitude, longitude, distance, action_time)
   VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `);
 const checkinData = [
-  { uid: 'chk_1', user: 'user_test_1', loc: 'loc_casona',      action: 'checkin',  lat: -33.427782, lon: -70.617822, dist: 0,  min: 480 },
-  { uid: 'chk_2', user: 'user_test_1', loc: 'loc_casona',      action: 'checkout', lat: -33.428,    lon: -70.618,    dist: 25, min: 0   },
-  { uid: 'chk_3', user: 'user_test_2', loc: 'loc_providencia', action: 'checkin',  lat: -33.4263,   lon: -70.6152,   dist: 0,  min: 600 },
-  { uid: 'chk_4', user: 'user_test_2', loc: 'loc_providencia', action: 'checkout', lat: -33.4265,   lon: -70.6154,   dist: 28, min: 120 },
-  { uid: 'chk_5', user: 'user_test_3', loc: 'loc_vitacura',    action: 'checkin',  lat: -33.3947,   lon: -70.5777,   dist: 0,  min: 240 },
+  {
+    uid: "chk_1",
+    user: "user_test_1",
+    loc: "loc_casona",
+    action: "checkin",
+    lat: -33.427782,
+    lon: -70.617822,
+    dist: 0,
+    min: 480,
+  },
+  {
+    uid: "chk_2",
+    user: "user_test_1",
+    loc: "loc_casona",
+    action: "checkout",
+    lat: -33.428,
+    lon: -70.618,
+    dist: 25,
+    min: 0,
+  },
+  {
+    uid: "chk_3",
+    user: "user_test_2",
+    loc: "loc_providencia",
+    action: "checkin",
+    lat: -33.4263,
+    lon: -70.6152,
+    dist: 0,
+    min: 600,
+  },
+  {
+    uid: "chk_4",
+    user: "user_test_2",
+    loc: "loc_providencia",
+    action: "checkout",
+    lat: -33.4265,
+    lon: -70.6154,
+    dist: 28,
+    min: 120,
+  },
+  {
+    uid: "chk_5",
+    user: "user_test_3",
+    loc: "loc_vitacura",
+    action: "checkin",
+    lat: -33.3947,
+    lon: -70.5777,
+    dist: 0,
+    min: 240,
+  },
 ];
-checkinData.forEach(c => {
-  insertCheckin.run(c.uid, c.user, c.loc, c.action, c.lat, c.lon, c.dist, ago(c.min));
+checkinData.forEach((c) => {
+  insertCheckin.run(
+    c.uid,
+    c.user,
+    c.loc,
+    c.action,
+    c.lat,
+    c.lon,
+    c.dist,
+    ago(c.min),
+  );
   console.log(`   ✓ ${c.action} — ${c.user} @ ${c.loc}`);
 });
 
 // ──────────── ADMIN MESSAGES ──────────────────────────────────
-console.log('\n📨 Creando solicitudes de contraseña...');
+console.log("\n📨 Creando solicitudes de contraseña...");
 const insertMsg = db.prepare(`
   INSERT OR IGNORE INTO admin_messages (id, username, type, status) VALUES (?, ?, ?, ?)
 `);
 [
-  { id: 'msg_1', user: '11223344-5', status: 'pending'  },
-  { id: 'msg_2', user: '98765432-1', status: 'pending'  },
-  { id: 'msg_3', user: '12345678-9', status: 'resolved' },
-].forEach(m => {
-  insertMsg.run(m.id, m.user, 'password_reset', m.status);
+  { id: "msg_1", user: "11223344-5", status: "pending" },
+  { id: "msg_2", user: "98765432-1", status: "pending" },
+  { id: "msg_3", user: "12345678-9", status: "resolved" },
+].forEach((m) => {
+  insertMsg.run(m.id, m.user, "password_reset", m.status);
   console.log(`   ✓ Solicitud ${m.status} — ${m.user}`);
 });
 
