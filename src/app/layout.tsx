@@ -3,7 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
-  title: "GeoHere",
+  title: "getinwork",
   description: "Sistema de Marcaje Georeferenciado",
 };
 

@@ -1,5 +1,5 @@
 {
-  "name": "geohere",
+  "name": "getinwork",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,8 +15,8 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:d1:migrate": "wrangler d1 execute geohere-db --file=drizzle/migrations.sql",
-    "db:d1:seed": "wrangler d1 execute geohere-db --file=scripts/d1-seed.sql",
+    "db:d1:migrate": "wrangler d1 execute getinwork-db --file=drizzle/migrations.sql",
+    "db:d1:seed": "wrangler d1 execute getinwork-db --file=scripts/d1-seed.sql",
     "fixture": "node scripts/fixture.js",
     "fixture:keep": "node scripts/fixture.js --keep-db",
     "test": "vitest run"
