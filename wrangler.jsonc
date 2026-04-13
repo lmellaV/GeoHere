@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "geohere",
+  // Usa la fecha del día de hoy
+  "compatibility_date": "2026-04-12",
+  "compatibility_flags": [
+    // Habilita las APIs de Node.js en el runtime de Cloudflare Workers
+    "nodejs_compat",
+    // Permite hacer fetch a URLs externas
+    "global_fetch_strictly_public",
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  // Auto-referencia para que el Worker pueda recibir sus propias requests (necesario para OpenNext)
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "geohere",
+    },
+  ],
+  // Binding a la base de datos D1 con el nombre GEOHERE_DB
+  "d1_databases": [
+    {
+      "binding": "GEOHERE_DB",
+      "database_name": "geohere-db",
+      // Reemplaza este valor con el ID real de tu D1 después de crearla:
+      // npx wrangler d1 create geohere-db
+      "database_id": "REEMPLAZAR_CON_ID_REAL",
+    },
+  ],
+  "observability": {
+    "enabled": true,
+  },
+}

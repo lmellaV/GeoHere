@@ -1,0 +1,35 @@
+.container {
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.userName {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.distance {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.distanceOk {
+  color: var(--success);
+}
+
+.distanceWarn {
+  color: #f59e0b; /* Amber 500 */
+}
+
+.time {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+
+.emptyState {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-soft);
+  font-size: 0.875rem;
+}

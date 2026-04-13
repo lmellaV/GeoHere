@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "chakra-ui": {
+      "source": "mgd34msu/goodvibes-gemini",
+      "sourceType": "github",
+      "computedHash": "ce3f44ee721d40a3198a0b25eb78eeca30e089dcaa6800d30990418515ff41bd"
+    }
+  }
+}

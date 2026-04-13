@@ -1,264 +1,115 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* GeoHere — Global Design Tokens (no framework) */
 
-* {
+/* ─── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
+/* ─── Design System Variables ────────────────────────────── */
 :root {
-  --background-color: #f8fafc;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --card-border: rgba(148, 163, 184, 0.22);
-  --text-main: #0f172a;
-  --text-soft: #64748b;
-  --accent: #059669;
-  --accent-2: #0ea5e9;
-  --login-bg: #ffffff;
-  --login-border: #000000;
-  --login-text: #000000;
-  --login-input-bg: #ffffff;
-  --login-input-border: #000000;
+  /* Brand — Azul vibrante */
+  --primary:        #2563eb;
+  --primary-hover:  #1d4ed8;
+  --primary-dark:   #1e40af;
+  --primary-light:  #eff6ff;
+  --primary-muted:  rgba(37, 99, 235, 0.12);
+
+  /* Accent */
+  --accent:         #7c3aed;
+  --accent-light:   #f5f3ff;
+
+  /* Gradients */
+  --gradient-primary:   linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  --gradient-hero:      linear-gradient(160deg, #1e3a8a 0%, #312e81 50%, #1e1b4b 100%);
+  --gradient-card:      linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(239,246,255,0.7) 100%);
+  --gradient-success:   linear-gradient(135deg, #059669 0%, #10b981 100%);
+  --gradient-danger:    linear-gradient(135deg, #dc2626 0%, #f87171 100%);
+
+  /* Semantic */
+  --success:  #10b981;
+  --warning:  #f59e0b;
+  --danger:   #ef4444;
+  --info:     #3b82f6;
+
+  /* Neutrals — Light Mode */
+  --bg-app:           #f0f4ff;
+  --bg-card:          #ffffff;
+  --bg-card-hover:    #f8f9ff;
+  --text-main:        #0f172a;
+  --text-soft:        #64748b;
+  --text-muted:       #94a3b8;
+  --border-subtle:    #e2e8f0;
+  --border-focus:     #2563eb;
+
+  /* Shadows */
+  --shadow-sm:   0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07);
+  --shadow-md:   0 4px 16px -2px rgb(37 99 235 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+  --shadow-lg:   0 10px 40px -4px rgb(37 99 235 / 0.16), 0 4px 6px -4px rgb(0 0 0 / 0.10);
+  --shadow-xl:   0 20px 60px -8px rgb(37 99 235 / 0.20);
+  --shadow-card: 0 0 0 1px rgb(0 0 0 / 0.04), 0 4px 24px -2px rgb(37 99 235 / 0.08);
+
+  /* Transitions */
+  --transition-fast:   140ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow:   400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Border Radius */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
 }
 
-body.dark,
-body[data-theme="dark"] {
-  --background-color: #0f172a;
-  --card-bg: rgba(15, 23, 42, 0.68);
-  --card-border: rgba(148, 163, 184, 0.3);
-  --text-main: #e2e8f0;
-  --text-soft: #94a3b8;
-  --accent: #7c3aed;
-  --accent-2: #22d3ee;
-  --login-bg: #000000;
-  --login-border: #ffffff;
-  --login-text: #ffffff;
-  --login-input-bg: #000000;
-  --login-input-border: #ffffff;
+/* ─── Dark Mode ──────────────────────────────────────────── */
+.dark, [data-theme="dark"] {
+  --primary-light:    #1e3a5f;
+  --primary-muted:    rgba(96, 165, 250, 0.12);
+  --accent-light:     #2d1d5e;
+
+  --gradient-card:    linear-gradient(145deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.9) 100%);
+
+  --bg-app:           #070d1f;
+  --bg-card:          #0f172a;
+  --bg-card-hover:    #1e293b;
+  --text-main:        #f1f5f9;
+  --text-soft:        #94a3b8;
+  --text-muted:       #64748b;
+  --border-subtle:    #1e293b;
+  --border-focus:     #60a5fa;
+
+  --shadow-sm:   0 1px 3px 0 rgb(0 0 0 / 0.3);
+  --shadow-md:   0 4px 16px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg:   0 10px 40px -4px rgb(0 0 0 / 0.5);
+  --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.04), 0 4px 24px -2px rgb(0 0 0 / 0.3);
 }
 
+/* ─── Base Styles ─────────────────────────────────────────── */
 body {
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    "Roboto",
-    "Oxygen",
-    "Ubuntu",
-    "Cantarell",
-    "Fira Sans",
-    "Droid Sans",
-    "Helvetica Neue",
-    sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--login-bg);
-  color: var(--login-text);
-  transition:
-    background 0.3s ease,
-    color 0.3s ease;
-}
-
-.app-surface {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.4);
-  transition: all 0.3s ease;
-}
-
-.app-surface:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.45);
-}
-
-.btn-modern {
-  border: 1px solid transparent;
-  border-radius: 12px;
-  padding: 0.6rem 1.1rem;
-  font-weight: 600;
-  transition: all 0.26s ease;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-  background: linear-gradient(145deg, #58a233 0%, #3d7f1e 100%);
-  color: #f7ffee;
-  border-color: rgba(158, 220, 122, 0.7);
-}
-
-.btn-modern:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.39);
-}
-
-.btn-modern:active {
-  transform: translateY(1px);
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.3);
-}
-
-.btn-leaf {
-  background: linear-gradient(145deg, #86efac 0%, #4d7c0f 100%);
-  color: #0f172a;
-  border-color: rgba(34, 197, 94, 0.55);
-  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.32);
-}
-
-.btn-outline {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(148, 163, 184, 0.5);
+  background-color: var(--bg-app);
   color: var(--text-main);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #7c3aed, #22d3ee);
-  color: #fff;
-  border-color: transparent;
+/* ─── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Focus Visible ───────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
-.btn-danger {
-  background: rgba(220, 38, 38, 0.18);
-  color: #fef2f2;
-  border-color: rgba(248, 113, 113, 0.45);
-}
-
-.btn-muted {
-  background: rgba(100, 116, 139, 0.2);
-  color: var(--text-soft);
-  border-color: rgba(148, 163, 184, 0.3);
-}
-
-/* Estilos minimalistas para login */
-.login-container {
-  background-color: var(--login-bg);
-  border: 1px solid var(--login-border);
-  color: var(--login-text);
-  transition: all 0.3s ease;
-  width: 100%;
-  max-width: 450px;
-  margin: 0 auto;
-}
-
-.login-input {
-  background-color: var(--login-input-bg);
-  border: 1px solid var(--login-input-border);
-  color: var(--login-text);
-  transition: all 0.2s ease;
-}
-
-.login-input::placeholder {
-  color: var(--login-text);
-  opacity: 0.5;
-}
-
-.login-input:focus {
-  outline: none;
-  border-color: var(--login-text);
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
-}
-
-body.dark .login-input:focus {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
-}
-
-.login-label {
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  color: var(--login-text);
-  opacity: 0.7;
-}
-
-.login-btn {
-  background-color: var(--login-border);
-  color: var(--login-bg);
-  border: 1px solid var(--login-border);
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-
-.login-btn:hover {
-  opacity: 0.85;
-}
-
-.login-btn:disabled {
-  opacity: 0.5;
-}
-
-/* Botones minimalistas globales */
-.btn-minimal {
-  background-color: var(--login-text);
-  color: var(--login-bg);
-  border: 1px solid var(--login-text);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  font-size: 0.875rem;
-}
-
-.btn-minimal:hover {
-  opacity: 0.8;
-}
-
-.btn-minimal-outline {
-  background-color: transparent;
-  color: var(--login-text);
-  border: 1px solid var(--login-text);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
-}
-
-.btn-minimal-outline:hover {
-  background-color: var(--login-text);
-  color: var(--login-bg);
-}
-
-.btn-minimal-danger {
-  background-color: #dc2626;
-  color: #ffffff;
-  border: 1px solid #dc2626;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
-}
-
-.btn-minimal-danger:hover {
-  opacity: 0.8;
-}
-
-/* Contenedor minimalista */
-.card-minimal {
-  background-color: var(--login-bg);
-  border: 1px solid var(--login-border);
-  border-radius: 8px;
-  padding: 1.5rem;
-  color: var(--login-text);
-}
-
-/* Input minimalista global */
-.input-minimal {
-  background-color: var(--login-input-bg);
-  border: 1px solid var(--login-input-border);
-  color: var(--login-text);
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-.input-minimal::placeholder {
-  color: var(--login-text);
-  opacity: 0.5;
-}
-
-.input-minimal:focus {
-  outline: none;
-  border-color: var(--login-text);
-}
+/* ─── Selection ───────────────────────────────────────────── */
+::selection { background: var(--primary-muted); color: var(--primary); }

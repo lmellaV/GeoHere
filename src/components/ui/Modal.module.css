@@ -1,0 +1,104 @@
+/* ─── Overlay ─────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(7, 13, 31, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  .overlay { align-items: center; }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ─── Modal Box ───────────────────────────────────────────── */
+.modal {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  width: 100%;
+  max-height: 90dvh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  animation: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (min-width: 640px) {
+  .modal {
+    border-radius: var(--radius-2xl);
+    max-width: 480px;
+    max-height: 85dvh;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ─── Header ─────────────────────────────────────────────── */
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background-color: var(--bg-card);
+  z-index: 1;
+}
+
+.modalTitle {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modalClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modalClose:hover {
+  background-color: var(--primary-muted);
+  color: var(--primary);
+}
+
+/* ─── Body ────────────────────────────────────────────────── */
+.modalBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ─── Footer ─────────────────────────────────────────────── */
+.modalFooter {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+  background-color: var(--bg-app);
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+}
+
+.modalFooter button { flex: 1; }

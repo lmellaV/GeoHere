@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
-  title: "GeoHere - Check-in por Geolocalización",
-  description:
-    "Sistema de check-in y check-out con validación de geolocalización",
+  title: "GeoHere",
+  description: "Sistema de Marcaje Georeferenciado",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="es">
-      <body className={inter.className}>{children}</body>
+    <html lang="es" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+      </head>
+      <body style={{ margin: 0, padding: 0 }}>
+        <ThemeProvider attribute="class" disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
