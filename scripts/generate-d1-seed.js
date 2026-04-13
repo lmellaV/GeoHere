@@ -4,8 +4,8 @@
  * Usar ANTES de poblar la base D1 en Cloudflare:
  *
  *   node scripts/generate-d1-seed.js
- *   npx wrangler d1 execute geohere-db --file=scripts/d1-schema.sql --remote
- *   npx wrangler d1 execute geohere-db --file=scripts/d1-seed.sql   --remote
+ *   npx wrangler d1 execute getinwork-db --file=scripts/d1-schema.sql --remote
+ *   npx wrangler d1 execute getinwork-db --file=scripts/d1-seed.sql   --remote
  */
 
 import { createWriteStream } from "fs";
@@ -157,10 +157,10 @@ async function main() {
   console.log("\n✅ scripts/d1-seed.sql generado correctamente.");
   console.log("   Próximos pasos:");
   console.log(
-    "   npx wrangler d1 execute geohere-db --file=scripts/d1-schema.sql --remote",
+    "   npx wrangler d1 execute getinwork-db --file=scripts/d1-schema.sql --remote",
   );
   console.log(
-    "   npx wrangler d1 execute geohere-db --file=scripts/d1-seed.sql   --remote",
+    "   npx wrangler d1 execute getinwork-db --file=scripts/d1-seed.sql   --remote",
   );
 }
 

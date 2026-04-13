@@ -1,5 +1,5 @@
--- Esquema de la base de datos GeoHere para Cloudflare D1
--- Ejecutar con: npx wrangler d1 execute geohere-db --file=scripts/d1-schema.sql
+-- Esquema de la base de datos GetInWork para Cloudflare D1
+-- Ejecutar con: npx wrangler d1 execute getinwork-db --file=scripts/d1-schema.sql
 
 CREATE TABLE IF NOT EXISTS companies (
   id TEXT PRIMARY KEY,

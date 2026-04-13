@@ -149,7 +149,7 @@ export default function LoginPage() {
             <div className={styles.logoIcon}>
               <MapPin size={24} />
             </div>
-            <h1 className={styles.brandName}>GeoHere</h1>
+            <h1 className={styles.brandName}>getinwork</h1>
           </div>
           <ThemeToggle />
         </header>

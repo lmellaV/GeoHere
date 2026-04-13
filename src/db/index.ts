@@ -8,7 +8,7 @@ import { cache } from "react";
 // sin que quede en el scope global (Workers no permite I/O desde scope global).
 export const getDb = cache(() => {
   const { env } = getCloudflareContext();
-  return drizzle((env as any).GEOHERE_DB, { schema });
+  return drizzle((env as any).GETINWORK_DB, { schema });
 });
 
 // Alias para que el código existente que usa `db` siga compilando sin cambios.

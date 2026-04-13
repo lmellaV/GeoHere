@@ -116,7 +116,7 @@ export default function AdminPage() {
               </button>
               <div className={styles.titleArea}>
                 <h1 className={styles.title}>Panel de Administración</h1>
-                <p className={styles.subtitle}>Gestión de recursos y logs de GeoHere</p>
+                <p className={styles.subtitle}>Gestión de recursos y logs de getinwork</p>
               </div>
             </div>
             <div className={styles.headerRight}>

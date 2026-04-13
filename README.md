@@ -1,6 +1,6 @@
-# GeoHere
+# GetInWork
 
-GeoHere es una solucion full-stack para gestion de asistencia y verificacion domiciliaria con geolocalizacion.
+GetInWork es una solucion full-stack para gestion de asistencia y verificacion domiciliaria con geolocalizacion.
 
 ## Caracteristicas
 
@@ -47,7 +47,7 @@ El repositorio ya esta preparado para OpenNext + Wrangler.
 ### 1) Crear D1 y configurar binding
 
 ```bash
-npx wrangler d1 create geohere-db
+npx wrangler d1 create getinwork-db
 ```
 
 - Copia el database_id resultante.
@@ -64,8 +64,8 @@ node scripts/generate-d1-seed.js
 Aplicar esquema y seed a D1:
 
 ```bash
-npx wrangler d1 execute geohere-db --file=scripts/d1-schema.sql --remote
-npx wrangler d1 execute geohere-db --file=scripts/d1-seed.sql --remote
+npx wrangler d1 execute getinwork-db --file=scripts/d1-schema.sql --remote
+npx wrangler d1 execute getinwork-db --file=scripts/d1-seed.sql --remote
 ```
 
 ### 3) Variables de entorno en Cloudflare

@@ -1,7 +1,7 @@
-# Documentación Interna - Cambios en GeoHere
+# Documentación Interna - Cambios en getinwork
 
 ## Objetivo
-Mejorar el frontend de la PWA GeoHere utilizando **Chakra UI v3**, implementando un diseño **minimalista**, **mobile-first** y **responsivo**, además de asegurar el acceso con **JWT (JSON Web Tokens)**. Todo el sistema ahora corre bajo un mismo framework (**Next.js**) para mayor simplicidad y rendimiento.
+Mejorar el frontend de la PWA getinwork utilizando **Chakra UI v3**, implementando un diseño **minimalista**, **mobile-first** y **responsivo**, además de asegurar el acceso con **JWT (JSON Web Tokens)**. Todo el sistema ahora corre bajo un mismo framework (**Next.js**) para mayor simplicidad y rendimiento.
 
 ## Cambios Realizados
 

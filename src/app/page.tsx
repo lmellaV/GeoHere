@@ -137,7 +137,7 @@ export default function Home() {
               <div className={styles.logoIcon}>
                 <MapPin size={22} />
               </div>
-              <h1 className={styles.brandName}>GeoHere</h1>
+              <h1 className={styles.brandName}>getinwork</h1>
             </div>
 
             <div className={styles.headerActions}>
@@ -274,7 +274,7 @@ export default function Home() {
           </main>
 
           <footer className={styles.footerText}>
-            GeoHere v1.0.0 · Verificación de asistencia por geolocalización
+            getinwork v1.0.0 · Verificación de asistencia por geolocalización
           </footer>
         </div>
       </div>
