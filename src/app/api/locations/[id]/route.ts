@@ -1,20 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { locations, checkins } from '@/db/schema';
-import { eq, sql, count } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/db";
+import { locations, checkins } from "@/db/schema";
+import { eq, sql, count } from "drizzle-orm";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { name, latitude, longitude, radius } = await req.json();
 
     if (!name || latitude == null || longitude == null) {
       return NextResponse.json(
-        { success: false, message: 'Faltan datos de ubicación' },
-        { status: 400 }
+        { success: false, message: "Faltan datos de ubicación" },
+        { status: 400 },
       );
     }
 
@@ -24,14 +24,15 @@ export async function PUT(
 
     if (!existingLoc) {
       return NextResponse.json(
-        { success: false, message: 'Ubicación no encontrada' },
-        { status: 404 }
+        { success: false, message: "Ubicación no encontrada" },
+        { status: 404 },
       );
     }
 
-    const defaultRadius = parseInt(process.env.GEO_RADIUS || '50', 10);
+    const defaultRadius = parseInt(process.env.GEO_RADIUS || "50", 10);
 
-    await db.update(locations)
+    await db
+      .update(locations)
       .set({
         name,
         latitude,
@@ -52,20 +53,20 @@ export async function PUT(
       },
     });
   } catch (error) {
-    console.error('Error al editar ubicación:', error);
+    console.error("Error al editar ubicación:", error);
     return NextResponse.json(
-      { success: false, message: 'Error en el servidor' },
-      { status: 500 }
+      { success: false, message: "Error en el servidor" },
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const existingLoc = await db.query.locations.findFirst({
       where: eq(locations.id, id),
@@ -73,22 +74,26 @@ export async function DELETE(
 
     if (!existingLoc) {
       return NextResponse.json(
-        { success: false, message: 'Ubicación no encontrada' },
-        { status: 404 }
+        { success: false, message: "Ubicación no encontrada" },
+        { status: 404 },
       );
     }
 
     // Verificar que no hay check-ins asociados
-    const checkinCountResult = await db.select({ count: count() })
+    const checkinCountResult = await db
+      .select({ count: count() })
       .from(checkins)
       .where(eq(checkins.locationId, id));
-    
+
     const checkinCount = checkinCountResult[0]?.count || 0;
 
     if (checkinCount > 0) {
       return NextResponse.json(
-        { success: false, message: 'No se puede eliminar una ubicación con check-ins asociados' },
-        { status: 400 }
+        {
+          success: false,
+          message: "No se puede eliminar una ubicación con check-ins asociados",
+        },
+        { status: 400 },
       );
     }
 
@@ -96,13 +101,13 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Ubicación eliminada correctamente',
+      message: "Ubicación eliminada correctamente",
     });
   } catch (error) {
-    console.error('Error al eliminar ubicación:', error);
+    console.error("Error al eliminar ubicación:", error);
     return NextResponse.json(
-      { success: false, message: 'Error en el servidor' },
-      { status: 500 }
+      { success: false, message: "Error en el servidor" },
+      { status: 500 },
     );
   }
 }

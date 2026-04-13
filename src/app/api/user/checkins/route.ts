@@ -1,17 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { checkins } from '@/db/schema';
-import { authenticateUser } from '@/lib/auth-utils';
-import { eq, desc } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/db";
+import { checkins } from "@/db/schema";
+import { authenticateUser } from "@/lib/auth-utils";
+import { eq, desc } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
   const auth = await authenticateUser(req);
   if (auth.error) {
-    return NextResponse.json({ success: false, message: auth.error }, { status: auth.status });
+    return NextResponse.json(
+      { success: false, message: auth.error },
+      { status: auth.status },
+    );
   }
 
   try {
-    const userId = auth.user.id;
+    const userId = auth.user?.id;
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: "Usuario no autenticado" },
+        { status: 401 },
+      );
+    }
     const userCheckins = await db.query.checkins.findMany({
       where: eq(checkins.userId, userId),
       orderBy: [desc(checkins.actionTime)],
@@ -19,7 +28,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ success: true, checkins: userCheckins });
   } catch (error) {
-    console.error('Error fetching user checkins:', error);
-    return NextResponse.json({ success: false, message: 'Error en el servidor' }, { status: 500 });
+    console.error("Error fetching user checkins:", error);
+    return NextResponse.json(
+      { success: false, message: "Error en el servidor" },
+      { status: 500 },
+    );
   }
 }

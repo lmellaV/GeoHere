@@ -9,8 +9,14 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
+    "db:d1:migrate": "wrangler d1 execute geohere-db --file=drizzle/migrations.sql",
+    "db:d1:seed": "wrangler d1 execute geohere-db --file=scripts/d1-seed.sql",
     "fixture": "node scripts/fixture.js",
     "fixture:keep": "node scripts/fixture.js --keep-db",
     "test": "vitest run"
@@ -21,12 +27,14 @@
   "type": "module",
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@opennextjs/cloudflare": "^1.19.1",
     "@types/express": "^5.0.6",
     "@types/node": "^25.3.3",
     "argon2": "^0.44.0",
     "better-sqlite3": "^12.8.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.45.1",
+    "jose": "^6.2.2",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.577.0",
     "next": "^16.1.6",
@@ -53,6 +61,7 @@
     "drizzle-kit": "^0.31.10",
     "jsdom": "^29.0.1",
     "tsx": "^4.21.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.0",
+    "wrangler": "^4.81.1"
   }
 }

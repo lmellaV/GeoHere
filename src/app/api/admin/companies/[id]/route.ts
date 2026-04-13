@@ -1,49 +1,67 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { companies } from '@/db/schema';
-import { authenticateAdmin } from '@/lib/auth-utils';
-import { eq, sql } from 'drizzle-orm';
-import argon2 from 'argon2';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/db";
+import { companies } from "@/db/schema";
+import { authenticateAdmin } from "@/lib/auth-utils";
+import { eq, sql } from "drizzle-orm";
+import { hashPassword } from "@/lib/crypto";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const auth = await authenticateAdmin(req);
-  if (auth.error) return NextResponse.json({ success: false, message: auth.error }, { status: auth.status });
+  if (auth.error)
+    return NextResponse.json(
+      { success: false, message: auth.error },
+      { status: auth.status },
+    );
 
   try {
-    const { id } = params;
+    const { id } = await params;
     const { name, password } = await req.json();
-    if (!name) return NextResponse.json({ success: false, message: 'Nombre requerido' }, { status: 400 });
+    if (!name)
+      return NextResponse.json(
+        { success: false, message: "Nombre requerido" },
+        { status: 400 },
+      );
 
     const updateData: any = { name, updatedAt: sql`CURRENT_TIMESTAMP` };
     if (password) {
-      updateData.password = await argon2.hash(password);
+      updateData.password = await hashPassword(password);
     }
 
     await db.update(companies).set(updateData).where(eq(companies.id, id));
 
-    return NextResponse.json({ success: true, message: 'Empresa actualizada' });
+    return NextResponse.json({ success: true, message: "Empresa actualizada" });
   } catch (error) {
-    console.error('Error al actualizar empresa:', error);
-    return NextResponse.json({ success: false, message: 'Error al actualizar empresa' }, { status: 500 });
+    console.error("Error al actualizar empresa:", error);
+    return NextResponse.json(
+      { success: false, message: "Error al actualizar empresa" },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const auth = await authenticateAdmin(req);
-  if (auth.error) return NextResponse.json({ success: false, message: auth.error }, { status: auth.status });
+  if (auth.error)
+    return NextResponse.json(
+      { success: false, message: auth.error },
+      { status: auth.status },
+    );
 
   try {
-    const { id } = params;
+    const { id } = await params;
     await db.delete(companies).where(eq(companies.id, id));
-    return NextResponse.json({ success: true, message: 'Empresa eliminada' });
+    return NextResponse.json({ success: true, message: "Empresa eliminada" });
   } catch (error) {
-    console.error('Error al eliminar empresa:', error);
-    return NextResponse.json({ success: false, message: 'Error al eliminar empresa' }, { status: 500 });
+    console.error("Error al eliminar empresa:", error);
+    return NextResponse.json(
+      { success: false, message: "Error al eliminar empresa" },
+      { status: 500 },
+    );
   }
 }
