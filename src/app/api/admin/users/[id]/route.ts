@@ -4,6 +4,7 @@ import { users } from "@/db/schema";
 import { authenticateAdmin } from "@/lib/auth-utils";
 import { eq, sql } from "drizzle-orm";
 import { hashPassword } from "@/lib/crypto";
+import { isPasswordCompliant } from "@/lib/server-utils";
 
 export async function PUT(
   req: NextRequest,
@@ -18,21 +19,39 @@ export async function PUT(
 
   try {
     const { id } = await params;
-    const { username, name, password, company_id } = await req.json();
-    if (!username || !name)
+    const { username, name, email, cargo, jornada, password, company_id } =
+      await req.json();
+    if (!username || !name || !email || !cargo || !jornada || !company_id)
       return NextResponse.json(
-        { success: false, message: "Username y nombre requeridos" },
+        {
+          success: false,
+          message:
+            "Nombre completo, RUT, correo, cargo, jornada y empresa requeridos",
+        },
         { status: 400 },
       );
 
     const updateData: any = {
       username,
       name,
+      email,
+      cargo,
+      jornada,
       companyId: company_id,
       updatedAt: sql`CURRENT_TIMESTAMP`,
     };
 
     if (password) {
+      if (!isPasswordCompliant(password)) {
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números",
+          },
+          { status: 400 },
+        );
+      }
       updateData.password = await hashPassword(password);
     }
 

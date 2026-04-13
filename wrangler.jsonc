@@ -1,41 +1,41 @@
 {
-	"$schema": "./node_modules/wrangler/config-schema.json",
-	"main": ".open-next/worker.js",
-	"name": "getinwork",
-	// Usa la fecha del día de hoy
-	"compatibility_date": "2026-04-12",
-	"compatibility_flags": [
-		// Habilita las APIs de Node.js en el runtime de Cloudflare Workers
-		"nodejs_compat",
-		// Permite hacer fetch a URLs externas
-		"global_fetch_strictly_public",
-	],
-	"assets": {
-		"directory": ".open-next/assets",
-		"binding": "ASSETS",
-	},
-	// Auto-referencia para que el Worker pueda recibir sus propias requests (necesario para OpenNext)
-	"services": [
-		{
-			"binding": "WORKER_SELF_REFERENCE",
-			"service": "getinwork",
-		},
-	],
-	// Binding a la base de datos D1 con el nombre GETINWORK_DB
-	"d1_databases": [
-		{
-			"binding": "GETINWORK_DB",
-			"database_name": "getinwork-db",
-			"database_id": "c9cda03d-53a0-4fdd-92ea-73ff097c53d8",
-			"remote": true
-		},
-	],
-	"build": {
-		// Asegura que `wrangler deploy` genere la salida `.open-next`
-		// incluso cuando el build command de Cloudflare ejecuta solo `next build`.
-		"command": "npx @opennextjs/cloudflare build",
-	},
-	"observability": {
-		"enabled": true,
-	},
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "getinwork",
+  // Usa la fecha del día de hoy
+  "compatibility_date": "2026-04-12",
+  "compatibility_flags": [
+    // Habilita las APIs de Node.js en el runtime de Cloudflare Workers
+    "nodejs_compat",
+    // Permite hacer fetch a URLs externas
+    "global_fetch_strictly_public",
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  // Auto-referencia para que el Worker pueda recibir sus propias requests (necesario para OpenNext)
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "getinwork",
+    },
+  ],
+  // Binding a la base de datos D1 con el nombre GETINWORK_DB
+  "d1_databases": [
+    {
+      "binding": "GETINWORK_DB",
+      "database_name": "getinwork-db",
+      "database_id": "c9cda03d-53a0-4fdd-92ea-73ff097c53d8",
+      "remote": true,
+    },
+  ],
+  "build": {
+    // Asegura que `wrangler deploy` genere la salida `.open-next`
+    // incluso cuando el build command de Cloudflare ejecuta solo `next build`.
+    "command": "npx @opennextjs/cloudflare build",
+  },
+  "observability": {
+    "enabled": true,
+  },
 }

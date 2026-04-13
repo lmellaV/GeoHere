@@ -43,29 +43,38 @@ async function hashPassword(password) {
 
 const seed = {
   companies: [
-    { id: "company_casona", name: "Casona Nueva", password: "admin123" },
-    { id: "company_norte", name: "Empresa Norte", password: "admin123" },
+    { id: "company_casona", name: "Casona Nueva", password: "Admin123" },
+    { id: "company_norte", name: "Empresa Norte", password: "Admin123" },
   ],
   users: [
     {
       id: "user_test_1",
       username: "12345678-9",
       name: "Usuario Prueba",
-      password: "admin123",
+      email: "usuario.prueba@getinwork.cl",
+      cargo: "Operario",
+      jornada: "Completa",
+      password: "Admin123",
       company_id: "company_casona",
     },
     {
       id: "user_test_2",
       username: "98765432-1",
       name: "María Empleado",
-      password: "admin123",
+      email: "maria.empleado@getinwork.cl",
+      cargo: "Supervisora",
+      jornada: "Turno",
+      password: "Admin123",
       company_id: "company_norte",
     },
     {
       id: "user_test_3",
       username: "11223344-5",
       name: "Pedro Olvidadizo",
-      password: "admin123",
+      email: "pedro.olvidadizo@getinwork.cl",
+      cargo: "Técnico",
+      jornada: "Parcial",
+      password: "Admin123",
       company_id: "company_casona",
     },
   ],
@@ -135,7 +144,7 @@ async function main() {
   for (const u of seed.users) {
     const hash = await hashPassword(u.password);
     lines.push(
-      `INSERT INTO users (id, username, name, password, company_id) VALUES ('${u.id}', '${u.username}', '${u.name}', '${hash}', '${u.company_id}');`,
+      `INSERT INTO users (id, username, name, email, cargo, jornada, password, company_id) VALUES ('${u.id}', '${u.username}', '${u.name}', '${u.email}', '${u.cargo}', '${u.jornada}', '${hash}', '${u.company_id}');`,
     );
     console.log(`✓ Usuario: ${u.username}  →  clave: ${u.password}`);
   }
