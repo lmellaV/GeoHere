@@ -4,9 +4,11 @@ import { companies } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { verifyPassword } from "@/lib/crypto";
 import { signJwt } from "@/lib/jwt";
+import { initializeDatabase } from "@/db/init";
 
 export async function POST(req: NextRequest) {
   try {
+    await initializeDatabase();
     const { name, password } = await req.json();
 
     if (!name || !password || name.length === 0 || password.length === 0) {

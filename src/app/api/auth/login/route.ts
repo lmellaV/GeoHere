@@ -5,9 +5,11 @@ import { eq, or } from "drizzle-orm";
 import { verifyPassword } from "@/lib/crypto";
 import { signJwt } from "@/lib/jwt";
 import { withObservability } from "@/lib/observability";
+import { initializeDatabase } from "@/db/init";
 
 async function handler(req: NextRequest) {
   try {
+    await initializeDatabase();
     const { username, password } = await req.json();
 
     if (!username || !password) {
