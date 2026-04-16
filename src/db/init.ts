@@ -1,21 +1,32 @@
 import { db } from "./index";
 import { companies, users, locations, adminMessages } from "./schema";
 import { hashPassword } from "@/lib/crypto";
-import { sql, count } from "drizzle-orm";
+import { sql, count, eq } from "drizzle-orm";
 
 // ─── Seed Data ───────────────────────────────────────────────
 // These credentials are documented in README.md
 const SEED = {
   company: { id: "company_casona", name: "Casona Nueva", password: "admin123" },
-  user: {
-    id: "user_test_1",
-    username: "12345678-9",
-    name: "Usuario Prueba",
-    email: "usuario.prueba@getinwork.cl",
-    cargo: "Operario",
-    jornada: "Completa",
-    password: "Admin123",
-  },
+  users: [
+    {
+      id: "user_admin_demo",
+      username: "11111111-1",
+      name: "Administrador Demo",
+      email: "admin.demo@getinwork.cl",
+      cargo: "Administrador",
+      jornada: "Completa",
+      password: "Admin123#",
+    },
+    {
+      id: "user_demo_1",
+      username: "22222222-2",
+      name: "Usuario Demo",
+      email: "user.demo@getinwork.cl",
+      cargo: "Operario",
+      jornada: "Completa",
+      password: "User123#",
+    },
+  ],
   locations: [
     {
       id: "loc_casona",
@@ -150,24 +161,27 @@ export async function initializeDatabase() {
       );
     }
 
-    // ── User ─────────────────────────────────────────────────
-    const userCount =
-      (await db.select({ val: count() }).from(users))[0]?.val || 0;
-    if (userCount === 0) {
-      const hash = await hashPassword(SEED.user.password);
-      await db.insert(users).values({
-        id: SEED.user.id,
-        username: SEED.user.username,
-        name: SEED.user.name,
-        email: SEED.user.email,
-        cargo: SEED.user.cargo,
-        jornada: SEED.user.jornada,
-        password: hash,
-        companyId: SEED.company.id,
+    // ── Usuarios de demostración ───────────────────────────────
+    for (const seedUser of SEED.users) {
+      const existingUser = await db.query.users.findFirst({
+        where: eq(users.username, seedUser.username),
       });
-      console.log(
-        `✓ Usuario creado — RUT: "${SEED.user.username}" / clave: "${SEED.user.password}"`,
-      );
+      if (!existingUser) {
+        const hash = await hashPassword(seedUser.password);
+        await db.insert(users).values({
+          id: seedUser.id,
+          username: seedUser.username,
+          name: seedUser.name,
+          email: seedUser.email,
+          cargo: seedUser.cargo,
+          jornada: seedUser.jornada,
+          password: hash,
+          companyId: SEED.company.id,
+        });
+        console.log(
+          `✓ Usuario creado — RUT: "${seedUser.username}" / clave: "${seedUser.password}"`,
+        );
+      }
     }
   } catch (error) {
     console.error("✗ Error en seed de la base de datos:", error);

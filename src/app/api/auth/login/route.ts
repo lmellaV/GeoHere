@@ -43,6 +43,11 @@ async function handler(req: NextRequest) {
     console.log("[LOGIN] User authData:", authData ? "Found" : "Not found");
     let role: "user" | "admin" = "user";
 
+    // Asignar rol admin a la cuenta de demostración
+    if (authData?.username === "11111111-1") {
+      role = "admin";
+    }
+
     // Si no es un usuario, buscar en la tabla de empresas
     if (!authData) {
       console.log("[LOGIN] Searching companies for:", cleanUsername);
