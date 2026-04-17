@@ -48,6 +48,26 @@ const seed = {
   ],
   users: [
     {
+      id: "user_admin_demo",
+      username: "11111111-1",
+      name: "Administrador Demo",
+      email: "admin.demo@getinwork.cl",
+      cargo: "Administrador",
+      jornada: "Completa",
+      password: "Admin123#",
+      company_id: "company_casona",
+    },
+    {
+      id: "user_demo_1",
+      username: "22222222-2",
+      name: "Usuario Demo",
+      email: "user.demo@getinwork.cl",
+      cargo: "Operario",
+      jornada: "Completa",
+      password: "User123#",
+      company_id: "company_casona",
+    },
+    {
       id: "user_test_1",
       username: "12345678-9",
       name: "Usuario Prueba",
