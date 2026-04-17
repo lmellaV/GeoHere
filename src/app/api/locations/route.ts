@@ -34,7 +34,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const defaultRadius = parseInt(process.env.GEO_RADIUS || '50', 10);
+    const defaultRadius = parseInt(
+      typeof process !== 'undefined' && process.env?.GEO_RADIUS
+        ? process.env.GEO_RADIUS
+        : '50',
+      10,
+    );
     const newId = generateId();
 
     await db.insert(locations).values({

@@ -37,9 +37,11 @@ export async function signPayload(
   payload: Record<string, unknown>,
 ): Promise<string> {
   const secret =
-    process.env.DATA_SIGNATURE_SECRET ||
-    process.env.JWT_SECRET ||
-    "default_integrity_secret";
+    (typeof process !== "undefined" && process.env?.DATA_SIGNATURE_SECRET)
+      ? process.env.DATA_SIGNATURE_SECRET
+      : (typeof process !== "undefined" && process.env?.JWT_SECRET)
+      ? process.env.JWT_SECRET
+      : "default_integrity_secret";
 
   const key = await crypto.subtle.importKey(
     "raw",

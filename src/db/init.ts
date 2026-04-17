@@ -134,7 +134,12 @@ export async function initializeDatabase() {
       );
     `);
 
-    const radius = parseInt(process.env.GEO_RADIUS || "100", 10);
+    const radius = parseInt(
+      typeof process !== "undefined" && process.env?.GEO_RADIUS
+        ? process.env.GEO_RADIUS
+        : "100",
+      10,
+    );
 
     // ── Locations ────────────────────────────────────────────
     const locationCount =

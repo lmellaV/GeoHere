@@ -7,7 +7,10 @@
 import { SignJWT, jwtVerify } from "jose";
 
 function getSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET || "default_secret";
+  const secret =
+    typeof process !== "undefined" && process.env?.JWT_SECRET
+      ? process.env.JWT_SECRET
+      : "default_secret";
   return new TextEncoder().encode(secret);
 }
 

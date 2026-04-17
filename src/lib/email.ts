@@ -13,8 +13,12 @@ export interface CheckinReceiptPayload {
 export async function sendCheckinReceipt(
   payload: CheckinReceiptPayload,
 ): Promise<{ ok: boolean; error?: string }> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RECEIPT_FROM_EMAIL || "noreply@getinwork.cl";
+  const apiKey =
+    typeof process !== "undefined" ? process.env?.RESEND_API_KEY : undefined;
+  const from =
+    typeof process !== "undefined" && process.env?.RECEIPT_FROM_EMAIL
+      ? process.env.RECEIPT_FROM_EMAIL
+      : "noreply@getinwork.cl";
 
   if (!apiKey) {
     return { ok: false, error: "RESEND_API_KEY no configurada" };

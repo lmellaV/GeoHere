@@ -29,7 +29,12 @@ export async function PUT(
       );
     }
 
-    const defaultRadius = parseInt(process.env.GEO_RADIUS || "50", 10);
+    const defaultRadius = parseInt(
+      typeof process !== "undefined" && process.env?.GEO_RADIUS
+        ? process.env.GEO_RADIUS
+        : "50",
+      10,
+    );
 
     await db
       .update(locations)
