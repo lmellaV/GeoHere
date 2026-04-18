@@ -11,7 +11,6 @@ if (!ACCOUNT_ID || !API_TOKEN) {
 }
 
 const script = fs.readFileSync(".open-next/worker.js", "utf-8");
-const payload = JSON.stringify({ main: script });
 
 const options = {
   hostname: "api.cloudflare.com",
@@ -19,8 +18,8 @@ const options = {
   method: "PUT",
   headers: {
     Authorization: `Bearer ${API_TOKEN}`,
-    "Content-Type": "application/json",
-    "Content-Length": Buffer.byteLength(payload),
+    "Content-Type": "application/javascript",
+    "Content-Length": Buffer.byteLength(script),
   },
 };
 
@@ -47,5 +46,5 @@ req.on("error", (e) => {
   process.exit(1);
 });
 
-req.write(payload);
+req.write(script);
 req.end();
