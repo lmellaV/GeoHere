@@ -30,11 +30,6 @@
       "remote": true,
     },
   ],
-  "build": {
-    // Asegura que `wrangler deploy` genere la salida `.open-next`
-    // incluso cuando el build command de Cloudflare ejecuta solo `next build`.
-    "command": "npx @opennextjs/cloudflare build",
-  },
   "observability": {
     "enabled": true,
   },
