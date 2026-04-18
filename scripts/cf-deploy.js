@@ -12,14 +12,30 @@ if (!ACCOUNT_ID || !API_TOKEN) {
 
 const script = fs.readFileSync(".open-next/worker.js", "utf-8");
 
+// Create multipart form data for script + metadata
+const boundary = "----FormBoundary" + Date.now();
+let body = `--${boundary}\r\n`;
+body += 'Content-Disposition: form-data; name="script"; filename="worker.js"\r\n';
+body += 'Content-Type: application/javascript\r\n\r\n';
+body += script + '\r\n';
+body += `--${boundary}\r\n`;
+body += 'Content-Disposition: form-data; name="metadata"\r\n';
+body += 'Content-Type: application/json\r\n\r\n';
+body += JSON.stringify({
+  main_module: "worker.js",
+  compatibility_date: "2026-04-12",
+  compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"]
+}) + '\r\n';
+body += `--${boundary}--\r\n`;
+
 const options = {
   hostname: "api.cloudflare.com",
   path: `/client/v4/accounts/${ACCOUNT_ID}/workers/scripts/getinwork`,
   method: "PUT",
   headers: {
     Authorization: `Bearer ${API_TOKEN}`,
-    "Content-Type": "application/javascript",
-    "Content-Length": Buffer.byteLength(script),
+    "Content-Type": `multipart/form-data; boundary=${boundary}`,
+    "Content-Length": Buffer.byteLength(body),
   },
 };
 
@@ -46,5 +62,5 @@ req.on("error", (e) => {
   process.exit(1);
 });
 
-req.write(script);
+req.write(body);
 req.end();

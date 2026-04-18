@@ -2,6 +2,7 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
   "name": "getinwork",
+  "modules": true,
   // Usa la fecha del día de hoy
   "compatibility_date": "2026-04-12",
   "compatibility_flags": [
