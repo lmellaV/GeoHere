@@ -24,7 +24,13 @@ body += 'Content-Type: application/json\r\n\r\n';
 body += JSON.stringify({
   main_module: "worker.js",
   compatibility_date: "2026-04-12",
-  compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"]
+  compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"],
+  modules: [
+    {
+      name: "worker.js",
+      type: "esm"
+    }
+  ]
 }) + '\r\n';
 body += `--${boundary}--\r\n`;
 
