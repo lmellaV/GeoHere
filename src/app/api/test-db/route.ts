@@ -12,7 +12,7 @@ export async function GET() {
     console.log("Env available:", !!cfContext?.env);
 
     // Check database binding
-    const dbBinding = cfContext?.env?.GETINWORK_DB;
+    const dbBinding = (cfContext?.env as any)?.GETINWORK_DB;
     console.log("Database binding available:", !!dbBinding);
 
     // Simple test query
@@ -25,9 +25,9 @@ export async function GET() {
       context: {
         hasContext: !!cfContext,
         hasEnv: !!cfContext?.env,
-        hasDbBinding: !!dbBinding
+        hasDbBinding: !!dbBinding,
       },
-      result: result
+      result: result,
     });
   } catch (error) {
     console.error("Database error:", error);
@@ -39,10 +39,10 @@ export async function GET() {
         context: {
           hasContext: !!getCloudflareContext(),
           hasEnv: !!getCloudflareContext()?.env,
-          hasDbBinding: !!getCloudflareContext()?.env?.GETINWORK_DB
-        }
+          hasDbBinding: !!(getCloudflareContext()?.env as any)?.GETINWORK_DB,
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

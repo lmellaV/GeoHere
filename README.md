@@ -42,7 +42,7 @@ npm run dev
 
 ## Despliegue en Cloudflare (GitHub conectado)
 
-El repositorio ya esta preparado para OpenNext + Wrangler.
+Este proyecto está preparado para desplegar en Cloudflare Workers con OpenNext.
 
 ### 1) Crear D1 y configurar binding
 
@@ -50,8 +50,8 @@ El repositorio ya esta preparado para OpenNext + Wrangler.
 npx wrangler d1 create getinwork-db
 ```
 
-- Copia el database_id resultante.
-- Reemplaza REEMPLAZAR_CON_ID_REAL en wrangler.jsonc.
+- Copia el `database_id` resultante.
+- Reemplaza `REEMPLAZAR_CON_ID_REAL` en `wrangler.jsonc` si corresponde.
 
 ### 2) Crear esquema y datos iniciales en D1
 
@@ -72,23 +72,27 @@ npx wrangler d1 execute getinwork-db --file=scripts/d1-seed.sql --remote
 
 En Workers Builds (Build variables and secrets):
 
-- JWT_SECRET (secret)
-- GEO_RADIUS (variable normal, por ejemplo 100)
+- `JWT_SECRET` (secret)
+- `GEO_RADIUS` (normal, por ejemplo `100`)
 
-### 4) Build y deploy en Cloudflare (desde GitHub)
+### 4) Despliegue recomendado desde GitHub Actions
 
-En la configuracion de Builds del Worker:
+Para evitar la inestabilidad de OpenNext en Windows, este repositorio ahora usa un workflow de GitHub Actions que construye y despliega desde Linux.
 
-- Build command:
+- Crea estos secrets en tu repositorio de GitHub:
+  - `CF_API_TOKEN`
+  - `CF_ACCOUNT_ID`
+  - `JWT_SECRET`
+  - `GEO_RADIUS`
+
+- El workflow se encuentra en:
+  - `.github/workflows/cloudflare-deploy.yml`
+
+Cuando hagas `push` a `main`, GitHub Actions ejecutará:
 
 ```bash
-npx @opennextjs/cloudflare build
-```
-
-- Deploy command:
-
-```bash
-npx @opennextjs/cloudflare deploy
+npm ci
+npm run deploy
 ```
 
 ### 5) Probar localmente en runtime Workers (opcional)
