@@ -33,9 +33,7 @@ jobs:
           GEO_RADIUS: "100"
 
       - name: Deploy to Cloudflare
-        run: npx wrangler deploy
+        run: node scripts/cf-deploy.js
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
