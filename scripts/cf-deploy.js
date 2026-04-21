@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import fs from "fs";
+import path from "path";
 import https from "https";
+import { fileURLToPath } from "url";
 
 const ACCOUNT_ID = process.env.CF_ACCOUNT_ID;
 const API_TOKEN = process.env.CF_API_TOKEN;
@@ -10,8 +12,6 @@ if (!ACCOUNT_ID || !API_TOKEN) {
   process.exit(1);
 }
 
-const script = fs.readFileSync(".open-next/worker.js", "utf-8");
-
 // Get environment variables
 const JWT_SECRET = process.env.JWT_SECRET;
 const GEO_RADIUS = process.env.GEO_RADIUS || "100";
@@ -20,6 +20,42 @@ if (!JWT_SECRET) {
   console.error("JWT_SECRET is required but not set");
   process.exit(1);
 }
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const openNextDir = path.join(__dirname, "../.open-next");
+
+// Collect all module files
+const modules = [];
+const moduleFiles = new Map();
+
+function collectModules(dir, prefix = "") {
+  if (!fs.existsSync(dir)) return;
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    const stat = fs.statSync(fullPath);
+    if (stat.isDirectory()) {
+      collectModules(fullPath, prefix ? `${prefix}/${file}` : file);
+    } else if (file.endsWith(".js") || file.endsWith(".mjs")) {
+      const moduleName = prefix ? `${prefix}/${file}` : file;
+      moduleFiles.set(moduleName, fullPath);
+      modules.push({ name: moduleName, type: "modules" });
+    }
+  }
+}
+
+// Collect main worker
+const workerPath = path.join(openNextDir, "worker.js");
+moduleFiles.set("worker.js", workerPath);
+modules.push({ name: "worker.js", type: "modules" });
+
+// Collect all other modules from cloudflare and server-functions
+collectModules(path.join(openNextDir, "cloudflare"));
+collectModules(path.join(openNextDir, "server-functions"));
+collectModules(path.join(openNextDir, "middleware"));
+
+console.log(`Found ${modules.length} modules to deploy`);
+modules.forEach((m) => console.log(`  - ${m.name}`));
 
 // Create multipart form data for ES modules
 const boundary = "----FormBoundary" + Date.now();
@@ -31,12 +67,7 @@ body +=
     main_module: "worker.js",
     compatibility_date: "2026-04-12",
     compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"],
-    modules: [
-      {
-        name: "worker.js",
-        type: "modules",
-      },
-    ],
+    modules: modules,
     d1_databases: [
       {
         binding: "GETINWORK_DB",
@@ -59,11 +90,15 @@ body +=
       },
     },
   }) + "\r\n";
-body += `--${boundary}\r\n`;
-body +=
-  'Content-Disposition: form-data; name="worker.js"; filename="worker.js"\r\n';
-body += "Content-Type: application/javascript+module\r\n\r\n";
-body += script + "\r\n";
+
+// Add each module file to the body
+for (const [moduleName, filePath] of moduleFiles.entries()) {
+  body += `--${boundary}\r\n`;
+  body += `Content-Disposition: form-data; name="${moduleName}"; filename="${moduleName}"\r\n`;
+  body += "Content-Type: application/javascript+module\r\n\r\n";
+  body += fs.readFileSync(filePath, "utf-8") + "\r\n";
+}
+
 body += `--${boundary}--\r\n`;
 
 const options = {
