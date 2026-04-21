@@ -5,13 +5,22 @@
  */
 
 import { SignJWT, jwtVerify } from "jose";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 function getSecret(): Uint8Array {
-  const secret =
-    typeof process !== "undefined" && process.env?.JWT_SECRET
-      ? process.env.JWT_SECRET
-      : "default_secret";
-  return new TextEncoder().encode(secret);
+  try {
+    const { env } = getCloudflareContext();
+    const secret = (env as any).JWT_SECRET || process.env?.JWT_SECRET;
+    if (!secret) {
+      console.warn("JWT_SECRET not found in env or process.env, using default");
+      return new TextEncoder().encode("default_secret");
+    }
+    return new TextEncoder().encode(secret);
+  } catch (error) {
+    // Fallback para desarrollo local
+    const secret = process.env?.JWT_SECRET || "default_secret";
+    return new TextEncoder().encode(secret);
+  }
 }
 
 export interface JwtPayload {
