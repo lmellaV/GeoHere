@@ -1,17 +1,15 @@
 -- Datos iniciales para GetInWork
--- Contraseñas hasheadas con argon2
--- admin: $argon2id$v=19$m=19456,t=2,p=1$xzPgXBSV0a3K5vYZCc7K1A$5RM8XgI1CYG6SLVVxZMOhyXZLKkSdZB6mEiVvyN2XrA
--- User123#: $argon2id$v=19$m=19456,t=2,p=1$+Ry+aPxFLLdGM3EVLb6yjg$qjVJG0wH7VJF7K8VzHvYFnVX8K4N9L2M5P0Q1R2S3T4
+-- Contraseñas hasheadas con PBKDF2+SHA256 (compatible con Web Crypto API)
 
--- Crear empresa
-INSERT OR IGNORE INTO companies (id, name, password) VALUES (
+-- Crear empresa (contraseña: admin123)
+REPLACE INTO companies (id, name, password) VALUES (
   'company_casona',
   'Casona Nueva',
-  '$argon2id$v=19$m=19456,t=2,p=1$xzPgXBSV0a3K5vYZCc7K1A$5RM8XgI1CYG6SLVVxZMOhyXZLKkSdZB6mEiVvyN2XrA'
+  'pbkdf2:d56a8365bb89a77c04d6c8920af2e78c:5ccd7fecb469976ccc78c79c00c35ae2a9cab0645c6ea69cd59d34d2bde696b2'
 );
 
 -- Crear usuarios
-INSERT OR IGNORE INTO users (
+REPLACE INTO users (
   id, username, name, email, cargo, jornada, password, company_id
 ) VALUES (
   'user_admin_demo',
@@ -20,11 +18,11 @@ INSERT OR IGNORE INTO users (
   'admin.demo@getinwork.cl',
   'Administrador',
   'Completa',
-  '$argon2id$v=19$m=19456,t=2,p=1$xzPgXBSV0a3K5vYZCc7K1A$5RM8XgI1CYG6SLVVxZMOhyXZLKkSdZB6mEiVvyN2XrA',
+  'pbkdf2:d56a8365bb89a77c04d6c8920af2e78c:5ccd7fecb469976ccc78c79c00c35ae2a9cab0645c6ea69cd59d34d2bde696b2',
   'company_casona'
 );
 
-INSERT OR IGNORE INTO users (
+REPLACE INTO users (
   id, username, name, email, cargo, jornada, password, company_id
 ) VALUES (
   'user_demo_1',
@@ -33,12 +31,12 @@ INSERT OR IGNORE INTO users (
   'user.demo@getinwork.cl',
   'Operario',
   'Completa',
-  '$argon2id$v=19$m=19456,t=2,p=1$+Ry+aPxFLLdGM3EVLb6yjg$qjVJG0wH7VJF7K8VzHvYFnVX8K4N9L2M5P0Q1R2S3T4',
+  'pbkdf2:3f04e62348b1b4446bf5af80019af33e:22453dd7175c3c3577680581cbc94d3392498c1e5ebc326559ab9af3fd909bc7',
   'company_casona'
 );
 
 -- Crear ubicaciones
-INSERT OR IGNORE INTO locations (id, name, latitude, longitude, radius) VALUES (
+REPLACE INTO locations (id, name, latitude, longitude, radius) VALUES (
   'loc_casona',
   'Casona Nueva',
   -33.427782,
@@ -46,7 +44,7 @@ INSERT OR IGNORE INTO locations (id, name, latitude, longitude, radius) VALUES (
   100
 );
 
-INSERT OR IGNORE INTO locations (id, name, latitude, longitude, radius) VALUES (
+REPLACE INTO locations (id, name, latitude, longitude, radius) VALUES (
   'loc_providencia',
   'Sucursal Providencia',
   -33.4263,
@@ -54,7 +52,7 @@ INSERT OR IGNORE INTO locations (id, name, latitude, longitude, radius) VALUES (
   100
 );
 
-INSERT OR IGNORE INTO locations (id, name, latitude, longitude, radius) VALUES (
+REPLACE INTO locations (id, name, latitude, longitude, radius) VALUES (
   'loc_vitacura',
   'Sucursal Vitacura',
   -33.3947,

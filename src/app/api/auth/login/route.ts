@@ -9,7 +9,6 @@ import { initializeDatabase } from "@/db/init";
 
 async function handler(req: NextRequest) {
   try {
-    await initializeDatabase();
     const { username, password } = await req.json();
 
     if (!username || !password) {
@@ -77,6 +76,25 @@ async function handler(req: NextRequest) {
 
     // Validar contraseña
     console.log("[LOGIN] Verifying password...");
+
+    try {
+      const passwordMatch = await verifyPassword(authData.password, password);
+      console.log("[LOGIN] Password match:", passwordMatch);
+
+      if (!passwordMatch) {
+        return NextResponse.json(
+          { success: false, message: "Contraseña incorrecta" },
+          { status: 401 },
+        );
+      }
+    } catch (err) {
+      console.error("🔥 PASSWORD ERROR:", err);
+      return NextResponse.json(
+        { success: false, message: "Error en verificación de contraseña" },
+        { status: 500 },
+      );
+    }
+
     const passwordMatch = await verifyPassword(authData.password, password);
     console.log("[LOGIN] Password match:", passwordMatch);
     if (!passwordMatch) {

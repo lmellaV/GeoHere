@@ -1,27 +1,33 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
+
   "name": "getinwork",
+  "main": ".open-next/worker.js",
+
   "compatibility_date": "2026-04-12",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
   },
+
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
       "service": "getinwork",
     },
   ],
+
   "d1_databases": [
     {
       "binding": "GETINWORK_DB",
       "database_name": "getinwork-db",
       "database_id": "c9cda03d-53a0-4fdd-92ea-73ff097c53d8",
-      "remote": true,
+      "migrations_dir": "drizzle",
     },
   ],
+
   "observability": {
     "enabled": true,
   },
