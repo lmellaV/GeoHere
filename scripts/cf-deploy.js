@@ -12,26 +12,52 @@ if (!ACCOUNT_ID || !API_TOKEN) {
 
 const script = fs.readFileSync(".open-next/worker.js", "utf-8");
 
+// Get environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
+const GEO_RADIUS = process.env.GEO_RADIUS || "100";
+
+if (!JWT_SECRET) {
+  console.error("JWT_SECRET is required but not set");
+  process.exit(1);
+}
+
 // Create multipart form data for script + metadata
 const boundary = "----FormBoundary" + Date.now();
 let body = `--${boundary}\r\n`;
-body += 'Content-Disposition: form-data; name="script"; filename="worker.js"\r\n';
-body += 'Content-Type: application/javascript\r\n\r\n';
-body += script + '\r\n';
+body +=
+  'Content-Disposition: form-data; name="script"; filename="worker.js"\r\n';
+body += "Content-Type: application/javascript\r\n\r\n";
+body += script + "\r\n";
 body += `--${boundary}\r\n`;
 body += 'Content-Disposition: form-data; name="metadata"\r\n';
-body += 'Content-Type: application/json\r\n\r\n';
-body += JSON.stringify({
-  main_module: "worker.js",
-  compatibility_date: "2026-04-12",
-  compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"],
-  modules: [
-    {
-      name: "worker.js",
-      type: "esm"
-    }
-  ]
-}) + '\r\n';
+body += "Content-Type: application/json\r\n\r\n";
+body +=
+  JSON.stringify({
+    main_module: "worker.js",
+    compatibility_date: "2026-04-12",
+    compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"],
+    d1_databases: [
+      {
+        binding: "GETINWORK_DB",
+        database_name: "getinwork-db",
+        database_id: "c9cda03d-53a0-4fdd-92ea-73ff097c53d8",
+      },
+    ],
+    services: [
+      {
+        binding: "WORKER_SELF_REFERENCE",
+        service: "getinwork",
+      },
+    ],
+    env: {
+      production: {
+        vars: {
+          JWT_SECRET: JWT_SECRET,
+          GEO_RADIUS: GEO_RADIUS,
+        },
+      },
+    },
+  }) + "\r\n";
 body += `--${boundary}--\r\n`;
 
 const options = {

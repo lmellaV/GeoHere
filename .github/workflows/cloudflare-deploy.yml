@@ -37,3 +37,5 @@ jobs:
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GEO_RADIUS: "100"

@@ -11,7 +11,7 @@ export default nextConfig;
 // En CI (GitHub Actions), se salta para evitar intentos de conexión remota a la API de Cloudflare.
 if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
   import("@opennextjs/cloudflare")
-    .then(module => module.initOpenNextCloudflareForDev?.())
+    .then((module) => module.initOpenNextCloudflareForDev?.())
     .catch(() => {
       // Silently ignore if module not available or init fails
     });
