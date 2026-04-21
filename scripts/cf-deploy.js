@@ -21,14 +21,9 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
-// Create multipart form data for script + metadata
+// Create multipart form data for ES modules
 const boundary = "----FormBoundary" + Date.now();
 let body = `--${boundary}\r\n`;
-body +=
-  'Content-Disposition: form-data; name="script"; filename="worker.js"\r\n';
-body += "Content-Type: application/javascript\r\n\r\n";
-body += script + "\r\n";
-body += `--${boundary}\r\n`;
 body += 'Content-Disposition: form-data; name="metadata"\r\n';
 body += "Content-Type: application/json\r\n\r\n";
 body +=
@@ -36,6 +31,12 @@ body +=
     main_module: "worker.js",
     compatibility_date: "2026-04-12",
     compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"],
+    modules: [
+      {
+        name: "worker.js",
+        type: "modules",
+      },
+    ],
     d1_databases: [
       {
         binding: "GETINWORK_DB",
@@ -58,6 +59,11 @@ body +=
       },
     },
   }) + "\r\n";
+body += `--${boundary}\r\n`;
+body +=
+  'Content-Disposition: form-data; name="worker.js"; filename="worker.js"\r\n';
+body += "Content-Type: application/javascript+module\r\n\r\n";
+body += script + "\r\n";
 body += `--${boundary}--\r\n`;
 
 const options = {
