@@ -34,4 +34,11 @@
   "observability": {
     "enabled": true,
   },
+  "env": {
+    "production": {
+      "vars": {
+        "GEO_RADIUS": "100",
+      },
+    },
+  },
 }
