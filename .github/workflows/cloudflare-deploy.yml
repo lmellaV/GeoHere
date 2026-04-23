@@ -33,7 +33,9 @@ jobs:
           GEO_RADIUS: "100"
 
       - name: Deploy to Cloudflare
-        run: npx wrangler deploy --env production
+        run: npx wrangler deploy --config wrangler.prod.jsonc
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GEO_RADIUS: "100"
