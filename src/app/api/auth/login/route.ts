@@ -89,18 +89,22 @@ async function handler(req: NextRequest) {
       }
     } catch (err) {
       console.error("🔥 PASSWORD ERROR:", err);
+      if (
+        err instanceof Error &&
+        err.message === "argon2_password_hash_not_supported_in_this_runtime"
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              "Tu contraseña está en un formato antiguo y no puede verificarse en este entorno. Ejecuta la migración de hashes o restablece la contraseña.",
+          },
+          { status: 409 },
+        );
+      }
       return NextResponse.json(
         { success: false, message: "Error en verificación de contraseña" },
         { status: 500 },
-      );
-    }
-
-    const passwordMatch = await verifyPassword(authData.password, password);
-    console.log("[LOGIN] Password match:", passwordMatch);
-    if (!passwordMatch) {
-      return NextResponse.json(
-        { success: false, message: "Contraseña incorrecta" },
-        { status: 401 },
       );
     }
 

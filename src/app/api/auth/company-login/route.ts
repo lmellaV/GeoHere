@@ -32,12 +32,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const passwordMatch = await verifyPassword(company.password, password);
-    if (!passwordMatch) {
-      return NextResponse.json(
-        { success: false, message: "Contraseña de empresa incorrecta" },
-        { status: 401 },
-      );
+    try {
+      const passwordMatch = await verifyPassword(company.password, password);
+      if (!passwordMatch) {
+        return NextResponse.json(
+          { success: false, message: "Contraseña de empresa incorrecta" },
+          { status: 401 },
+        );
+      }
+    } catch (err) {
+      console.error("🔥 PASSWORD ERROR:", err);
+      if (
+        err instanceof Error &&
+        err.message === "argon2_password_hash_not_supported_in_this_runtime"
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              "La contraseña está en un formato antiguo y no puede verificarse en este entorno. Ejecuta la migración de hashes o restablece la contraseña.",
+          },
+          { status: 409 },
+        );
+      }
+      throw err;
     }
 
     const token = await signJwt({

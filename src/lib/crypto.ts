@@ -52,14 +52,16 @@ export async function verifyPassword(
   stored: string,
   input: string,
 ): Promise<boolean> {
-  // Soporte legacy para hashes Argon2 almacenados ($argon2...)
-  // En Workers, argon2 nativo no está disponible. Nunca debería llegar acá
-  // en producción si la migración fue correcta, pero lo señalamos explícitamente.
+  if (typeof stored !== "string") return false;
+
   if (stored.startsWith("$argon2")) {
-    throw new Error(
-      "Este hash fue generado con Argon2 y no puede verificarse en Cloudflare Workers. " +
-        "Ejecuta el script de migración de base de datos para regenerar las contraseñas.",
-    );
+    try {
+      const mod = await import("argon2");
+      const argon2 = (mod as any).default ?? mod;
+      return await argon2.verify(stored, input);
+    } catch {
+      throw new Error("argon2_password_hash_not_supported_in_this_runtime");
+    }
   }
 
   const [, saltHex, hashHex] = stored.split(":");
