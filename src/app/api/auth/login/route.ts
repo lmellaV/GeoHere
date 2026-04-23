@@ -9,6 +9,7 @@ import { initializeDatabase } from "@/db/init";
 
 async function handler(req: NextRequest) {
   try {
+    await initializeDatabase();
     const { username, password } = await req.json();
 
     if (!username || !password) {
