@@ -12,7 +12,7 @@ const subtle = webcrypto.subtle;
 
 const ALGO = "PBKDF2";
 const HASH_FN = "SHA-256";
-const ITERATIONS = 250_000;
+const ITERATIONS = 100_000;
 const KEY_LENGTH = 32;
 
 function uint8ToHex(buf) {

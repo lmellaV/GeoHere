@@ -125,9 +125,11 @@ async function handler(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error en login:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error("Error en login:", msg, stack);
     return NextResponse.json(
-      { success: false, message: "Error en el servidor" },
+      { success: false, message: "Error en el servidor", debug: msg },
       { status: 500 },
     );
   }

@@ -9,7 +9,7 @@
 
 const ALGO = "PBKDF2";
 const HASH_FN = "SHA-256";
-const ITERATIONS = 250_000;
+const ITERATIONS = 100_000;
 const KEY_LENGTH = 32; // bytes → 256 bits
 
 function uint8ToHex(buf: Uint8Array): string {
