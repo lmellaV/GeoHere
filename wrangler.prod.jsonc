@@ -31,5 +31,4 @@
   "observability": {
     "enabled": true,
   },
-  "routes": [{ "pattern": "getinwork.app/*", "zone_name": "getinwork.app" }],
 }
