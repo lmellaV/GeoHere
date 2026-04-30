@@ -20,6 +20,7 @@ export const users = sqliteTable("users", {
   companyId: text("company_id")
     .notNull()
     .references(() => companies.id),
+  status: text("status").default("pending").notNull(), // pending, approved, rejected
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });

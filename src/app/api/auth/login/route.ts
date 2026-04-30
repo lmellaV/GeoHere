@@ -73,6 +73,27 @@ async function handler(req: NextRequest) {
       );
     }
 
+    // Verificar que el usuario esté aprobado (si es usuario, no empresa)
+    if ("status" in authData && authData.status === "pending") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Tu cuenta está pendiente de aprobación por la empresa.",
+        },
+        { status: 403 },
+      );
+    }
+
+    if ("status" in authData && authData.status === "rejected") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Tu cuenta fue rechazada. Contacta al administrador.",
+        },
+        { status: 403 },
+      );
+    }
+
     // Validar contraseña
     console.log("[LOGIN] Verifying password...");
 

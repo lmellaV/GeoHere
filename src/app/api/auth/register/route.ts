@@ -101,6 +101,7 @@ export async function POST(req: NextRequest) {
       jornada: normalizedJornada,
       password: hashedPassword,
       companyId: normalizedCompanyId,
+      status: "pending",
     });
 
     const requestMeta = getRequestMetadata(req);
@@ -137,8 +138,10 @@ export async function POST(req: NextRequest) {
         cargo: normalizedCargo,
         jornada: normalizedJornada,
         password: finalPassword,
+        status: "pending",
       },
-      message: "Usuario registrado exitosamente",
+      message:
+        "Usuario registrado exitosamente. Esperando aprobación de la empresa.",
     });
   } catch (error) {
     console.error("Error en registro:", error);
