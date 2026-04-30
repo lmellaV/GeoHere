@@ -43,8 +43,8 @@ async function handler(req: NextRequest) {
     console.log("[LOGIN] User authData:", authData ? "Found" : "Not found");
     let role: "user" | "admin" = "user";
 
-    // Asignar rol admin a la cuenta de demostración
-    if (authData?.username === "11111111-1") {
+    // Asignar rol admin al usuario específico
+    if (authData?.username === "20575293-5") {
       role = "admin";
     }
 
